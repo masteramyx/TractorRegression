@@ -1,0 +1,334 @@
+---
+title: "TractorRegression"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(maps)
+
+install.packages("multcomp")
+install.packages("mvtnorm")
+library(drc)
+```
+
+
+
+<!-- The Tractor-Diffusion dataset contains the years.. 1925 1930 1940 1950 1954 1964 1969 -->
+<!-- The VAM data which has RUCC codes contains years.. 1929 1947 1954 1958 1963 -->
+
+<!-- KEEP RUCC LEVEL 3 in 1960 -->
+
+<!-- IF 1-3 in 1st year or 1-2 in last year, then throw them out -->
+
+This goal of this report is to fit our current Tractor data relating to counties to a logistic curve.
+This will generate a dataset where each row is a county and it will contain 4 columns.
+[County, Slope Coefficient, Mid-Point Coefficient, Ceiling Coefficient], The floor coefficent has been set to 0.
+
+As a high level overview, this will require filtering out counties that have properties counter to the logistic curve.
+Such as counties that begin with adoptions rates > 50%, counties that have a max adoption rate of > 100, etc. These will be described as they are preformed throughout the analysis. In addition to these requirements, some merging was done in order to identify "Urban" counties based on RUCC codes and subsequently removing those counties as we are interested in "Rural Manufacturing"
+
+## Read-in main data
+```{r data}
+df29_69 <- read.csv("Tractor_Raw_Data/df29-69.csv")
+vam <- read.csv("vamFipsData.csv")
+rucc <- vam[,c(3,10,4,7)]
+```
+
+
+## Finding highest urban level for each county
+
+After reading in the tractor data and rucc data. We want to look at each counties MAX RUCC to determine if they should be removed or not. Some counties such as Fulton County, GA have been duplicated due to changes over the year. There are only 8 of these instances so we will remove them as well. 
+```{r rucc}
+maxRucc = rucc %>% 
+  group_by(fips, County, state) %>%
+  summarize(maxRucc = min(RUCC))
+
+maxRucc
+
+removedByRUCC <- maxRucc[which(maxRucc$maxRucc <= 3) ,]
+removedByRUCC <- removedByRUCC[!duplicated(removedByRUCC$fips),]
+#write.csv(removedByRUCC, "CountiesRemovedByUrban.csv")
+
+```
+
+
+## Re-create dataset with Urban Counties removed
+
+```{r}
+#new df has all urban counties removed
+new.df <- df29_69[!(df29_69$fips %in% removedByRUCC$fips),]
+new.df$X <- NULL
+```
+
+
+
+## Remove records where percent > 50% @ 1925
+
+```{r 1925, echo=FALSE}
+df25 <- subset(new.df, year == 1925)
+
+#Remove these counties throughtout every year since they are not following the s curve
+df25.remove <- df25[which(df25$percent_farm_tractor > .5),]
+new.df.25removed <- new.df[!(new.df$fips %in% df25.remove$fips),]
+as_tibble(df25.remove)
+```
+
+
+## Remove records where percent > 50% @ 1930
+
+```{r 1930, echo=FALSE}
+df30 <- subset(new.df.25removed, year == 1930)
+
+#Remove these counties throughtout every year since they are not following the s curve
+df30.remove <- df30[which(df30$percent_farm_tractor > .5),]
+new.df.30removed <- new.df.25removed[!(new.df.25removed$fips %in% df30.remove$fips),]
+as_tibble(df30.remove)
+```
+
+
+
+
+## Remove records where percent < 50% @ 1964
+```{r, echo = FALSE}
+df64 <- subset(new.df.30removed, year == 1964)
+
+#Remove these counties throughtout every year since they are not following the s curve
+df64.remove <- df64[which(df64$percent_farm_tractor < .5),]
+new.df.64removed <- new.df.30removed[!(new.df.30removed$fips %in% df64.remove$fips),]
+as_tibble(df64.remove)
+```
+
+
+## Remove records where percent < 50% @ 1969
+```{r, echo = FALSE}
+df69 <- subset(new.df.64removed, year == 1969)
+
+#Remove these counties throughtout every year since they are not following the s curve
+df69.remove <- df69[which(df69$percent_farm_tractor < .5),]
+final.df <- new.df.64removed[!(new.df.64removed$fips %in% df69.remove$fips),]
+as_tibble(df69.remove)
+```
+
+
+
+## Max value is should be 1.05, remove any above this
+```{r}
+temp <- df29_69[order(df29_69[,6], decreasing=T),]
+temp$name <- as.character(temp$name)
+temp$stateAbb <- as.character(temp$stateAbb)
+as_tibble(head(temp))
+```
+
+***
+Some places above max param: 
+                          Treasure, MT
+                          Storey, NV
+                          Summit, CO
+                          Wibaux, MT
+                          
+***                       
+                        
+```{r, echo = FALSE}
+max_param <- final.df[which(final.df$percent_farm_tractor > 1),]
+final.df <- final.df[!(final.df$fips %in% max_param$fips),]
+```
+                      
+
+Preview DF after filtering above
+```{r}
+as_tibble(final.df)
+```                      
+                        
+         
+
+### Filtering Complete; Fit Model
+```{r}
+
+
+split_df <- split(final.df, final.df$fips)
+
+#Function to fit model for each individual record
+fitfun <- function(d) { 
+  mL <- drm(percent_farm_tractor ~ year, data = d, fct = L.3(), type = "continuous")
+    return(coef(mL))
+}
+
+#Test function
+fitfun(split_df[[1]])
+
+vecNames <- c()
+vecState <- c()
+fips <- c()
+j <- 1
+params <- data.frame()
+for(j in 1:length(split_df)){
+  if(nrow(split_df[[j]]) != 1){
+  vecNames[j] = as.character(split_df[[j]]$name[1])
+  vecState[j] = as.character(split_df[[j]]$stateAbb[1])
+  fips[j] = split_df[[j]]$fips[1]
+  
+  mL <- drm(percent_farm_tractor ~ year, data = as.data.frame(split_df[[j]]), fct = L.3(), type = "continuous")
+  #mL <- fitfun(split_df[[j]])
+  params <- rbind(params, coef(mL))
+  }
+}
+colnames(params) <- c("Slope", "Ceiling", "Mid")
+params$Slope <- -(params$Slope)
+vecNames <- na.omit(vecNames)
+vecState <- na.omit(vecState)
+fips <- na.omit(fips)
+
+params$County <- vecNames
+params$State <- vecState
+params$fips <- fips
+
+#write.csv(params, "TractorCoef.csv")
+
+```
+
+```{r, eval=FALSE}
+
+#DONT THINK THIS IS USABLE
+library(nls2)
+
+ fm1DNase1 <- nls(percent_farm_tractor ~ SSlogis(year, Asym, xmid, scal),final.df)
+ summary(fm1DNase1)
+ coef(fm1DNase1)
+ plot(final.df$year, final.df$percent_farm_tractor)
+ lines(final.df$year, predict(fm1DNase1))
+ 
+ 
+ 
+ j <- 1
+params <- data.frame()
+for(j in 1:length(split_df)){
+  if(nrow(split_df[[j]]) != 1){
+    if(j != 2 & j != 41 & j != 44 & j != 48){
+  mL <- nls(percent_farm_tractor ~ SSlogis(year, Asym, xmid, scal),data = split_df[[j]],control =  nls.control(warnOnly = TRUE, minFactor = 0))
+  params <- rbind(params, coef(mL))
+  #params <- cbind(params,split_df[[j]][1,c(4,6)])
+    }
+  }
+}
+colnames(params) <- c("Ceiling", "Mid", "Slope")
+vec <- split_df[[1]][1,c(4,6)]
+split_df[[52]]
+```
+      
+      
+      
+# Mapping Tractor Diffusion by region 
+
+## Roll up each year df by state, sum the %farm_tractor and count nrows, created `rolledUp_year.csv`
+
+```{r diff_map}
+#1925
+rolledUp_25 <- df25 %>% 
+  group_by(stateAbb) %>%
+  summarise(percent = sum(percent_farm_tractor)/n(), year = 1925)
+      
+#1930
+rolledUp_30 <- subset(new.df, year == 1930) %>%
+  group_by(stateAbb) %>%
+  summarise(percent = sum(percent_farm_tractor)/n(), year = 1930) 
+
+#1940
+rolledUp_40 <- subset(new.df, year == 1940) %>%
+  group_by(stateAbb) %>%
+  summarise(percent = sum(percent_farm_tractor)/n(), year = 1940) 
+
+#1950
+rolledUp_50 <- subset(new.df, year == 1950) %>%
+  group_by(stateAbb) %>%
+  summarise(percent = sum(percent_farm_tractor)/n(), year = 1950) 
+
+#1954
+rolledUp_54 <- subset(new.df, year == 1954) %>%
+  group_by(stateAbb) %>%
+  summarise(percent = sum(percent_farm_tractor)/n(), year = 1954) 
+
+#1964
+rolledUp_64 <- subset(new.df, year == 1964) %>%
+  group_by(stateAbb) %>%
+  summarise(percent = sum(percent_farm_tractor)/n(), year = 1964) 
+
+#1969
+rolledUp_69 <- subset(new.df, year == 1969) %>%
+  group_by(stateAbb) %>%
+  summarise(percent = sum(percent_farm_tractor)/n(), year = 1969) 
+
+rolledUp_all <- rbind(rolledUp_25, rolledUp_30, rolledUp_40, rolledUp_50, rolledUp_54, rolledUp_64, rolledUp_69)
+#write.csv(rolledUp_all, "rolledUp_all.csv")      
+```
+
+
+
+
+```{r regionDiff}
+library(ggplot2)
+
+# South-Central(AL, MS, TN) within region plot
+southCentral <- subset(rolledUp_all, stateAbb %in% c("AL", "MS", "TN"))
+ggplot(southCentral, aes(x = year, y = percent)) +
+  geom_line(aes(group = stateAbb, colour = stateAbb)) +
+  labs(title = " Tractor Diffusion", x = "Year", y = "% Farms w/ Tractors")
+
+rolledUp_southCentral <- southCentral %>% 
+  group_by(year) %>%
+  summarise(percent = sum(percent)/3, region = "SC")
+
+# South-West(AR,OK,LA,TX) within region plot
+southWest <- subset(rolledUp_all, stateAbb %in% c("AR", "OK", "LA", "TX"))
+ggplot(southWest, aes(x = year, y = percent)) +
+  geom_line(aes(group = stateAbb, colour = stateAbb)) +
+  labs(title = " Tractor Diffusion", x = "Year", y = "% Farms w/ Tractors")
+
+rolledUp_southWest <- southWest %>% 
+  group_by(year) %>%
+  summarise(percent = sum(percent)/3, region = "SW")
+
+
+# South-East(NC,SC,GA,FL) within region plot
+southEast <- subset(rolledUp_all, stateAbb %in% c("NC", "SC", "GA", "FL"))
+ggplot(southEast, aes(x = year, y = percent)) +
+  geom_line(aes(group = stateAbb, colour = stateAbb)) +
+  labs(title = " Tractor Diffusion", x = "Year", y = "% Farms w/ Tractors")
+
+rolledUp_southEast <- southEast %>% 
+  group_by(year) %>%
+  summarise(percent = sum(percent)/3, region = "SE")
+
+
+
+
+
+```
+
+# Visualize diffusion by the 3 regions
+```{r regionRolledUpDiff}
+regions <- rbind(rolledUp_southCentral, rolledUp_southEast, rolledUp_southWest)
+
+ggplot(regions, aes(x = year, y = percent)) +
+  geom_line(aes(group = region, colour = region)) +
+  labs(title = " Tractor Diffusion", x = "Year", y = "% Farms w/ Tractors")
+
+```
+
+
+
+
+# Regressing VAM on the Logistic Parameters
+## Looking at years 1954 & 1958(?)
+
+```{r, echo = false}
+
+#Create dataset for year 1954 w/ VAM for each county and Logit Params for each county
+
+
+
+```
+
+
+

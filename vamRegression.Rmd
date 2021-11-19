@@ -1,0 +1,333 @@
+---
+title: "VamRegression"
+author: "Kyle Amyx"
+date: "6/12/2019"
+output:
+  pdf_document: default
+  html_document:
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(InformationValue)
+```
+
+## Regressing VAM on Logistic Params for years 1954 and 1958
+
+```{r data}
+params <- read.csv("Tractor_Raw_Data/TractorCoef.csv")
+vam <- read.csv("vamFipsData.csv")
+params[,1] <- NULL
+vam[,1] <- NULL
+```
+
+## Merge params DF and vam DF
+
+```{r pressure, echo=FALSE}
+df <- merge(params, vam, by = "fips", all = FALSE)
+df[,c(7,8,9,12,13,14,15,16)] <- NULL
+
+```
+
+INFO:
+
+The dataset i'm using matches each county and year to their corresponding logistic params.(Slope, Ceiling, Mid)
+Any counties with a Negative slope have been removed
+Any counties with a ceiling > 1 have been removed. 
+Any counties with a midpoint before 1900 or after 1980 have been removed
+Any counties with VAM as NA have been removed
+Any counties with VAM as 0 have been removed
+
+```{r}
+#remove high ceilings
+df <- df[df$Ceiling <= 1, ]
+df <- df[df$Mid > 1940,]
+df <- df[df$Mid < 1960,]
+df <- df[!is.na(df$VAM),]
+#Remove response variables that are 0
+df <- df[which(df$VAM > 0),]
+write.csv(df, "filtered_df.csv")
+```
+
+
+The next step necessary for fitting a logistic is to create a binary response
+
+I've set the `response` as a binary value(1 = "Success", 0 = "Failure"), this value was determined by wether a county had VAM of > 250 or not. This is arbritary and can be played with to see if it changes the result.
+I chose 250 b/c the range of VAM is (1,999) however majority of these values are below 500 so it seemed like a good starting point.
+
+```{r}
+df$response <- ifelse(df$VAM >= 250, 1, 0)
+```
+
+
+
+Before subsetting the data and get into modeling, I want to remove any N/A's.
+```{r}
+unique(is.na(df))
+```
+As seen above, none of the columns contain any N/A values
+
+
+
+
+
+
+Below is a glimpse at the current dataset that will be used in the modeling. Next step is to reduce the observations to only rows that correspond to the years 1954 or 1958
+
+```{r}
+head(df)
+```
+
+
+```{r}
+df.54 <- subset(df, year == 1954)
+rownames(df.54) <- 1:nrow(df.54)
+df.58 <- subset(df, year == 1958)
+rownames(df.58) <- 1:nrow(df.58)
+```
+
+Glimpse into 1954 dataset
+
+```{r}
+head(df.54)
+```
+
+Glimpse into 1958 dataset
+```{r}
+head(df.58)
+```
+
+
+
+#1954 Training and Test Set
+
+```{r}
+smp_size <- floor(.7 * nrow(df.54))
+set.seed(123)
+train_ind <- sample(seq_len(nrow(df.54)), size = smp_size)
+
+df.54.train <- df.54[train_ind,]
+
+df.54.test <- df.54[-train_ind,]
+
+```
+
+
+# 1954 Model w/o Transformations and Plots 
+
+Below are some exploratory plots containing the predictor features for year 1954.
+
+The main one that I want to point out is [VAM vs. Slope], it seems counter-intuitive to me that as the slope increase for the county, the VAM is decreasing. 
+
+Maybe you have some other insight into this??
+
+```{r 54Model, echo=FALSE}
+plot(df.54$Slope, df.54$VAM, main = "1954", xlab = "Slope")
+plot(df.54$Mid, df.54$VAM, main = "1954", xlab  = "Mid")
+plot(df.54$Ceiling, df.54$VAM, main = "1954", xlab = "Ceiling")
+ggplot(df.54,aes(x = Slope, y = VAM)) + geom_point()  + geom_smooth(method =  "lm") + ggtitle("1954")
+
+sapply(df, class)
+```
+
+# 54 Model Summary
+
+Below is the actual modeling for year 1954 on training set
+```{r}
+model <- glm(response ~ Slope + Ceiling + Mid,  data = df.54.train, family=binomial(link = "logit"))
+summary(model)
+predicted.54 <- plogis(predict(model, df.54.test))
+```
+
+Looking at the model summary above ^, this tells me that as both slope and mid increase independent of one another, VAM will decrease. However, as the Ceiling parameter increases, VAM will increase with. I'm not sure how to interpret this, maybe to be discussed??
+
+```{r, echo = FALSE}
+#Find Optimal Prediction cutoff
+optCutOff <- optimalCutoff(df.54.test$response, predicted.54)
+
+#Misclassification Error
+misClassError(df.54.test$response, predicted.54, threshold = optCutOff)
+
+
+#ROC Curve
+plotROC(df.54.test, predicted.54)
+```
+
+This model is able to predict `Success` counties 30% of the time, doesn't seem very good but at the same time we dont have much to work with
+```{r}
+#Sensitivity(Truth Detection Rate)
+sensitivity(df.54.test$response, predicted.54, threshold = optCutOff)
+confusionMatrix(df.54.test$response, predicted.54, threshold = optCutOff)
+```
+
+
+## 1954 Model w/ Transformations
+
+Exploratory plots for predictor features log-transformed
+```{r 1954Trans}
+trans54.df.train <- df.54.train
+trans54.df.test <- df.54.test
+trans54.df.train$Ceiling <- log(trans54.df.train$Ceiling)
+trans54.df.test$Ceiling <- log(trans54.df.test$Ceiling)
+trans54.df.train$Slope <- log(trans54.df.train$Slope)
+trans54.df.test$Slope <- log(trans54.df.test$Slope)
+
+
+#Plots for Transformed Predictors in Year 1954
+plot(trans54.df.train$Slope, trans54.df.train$VAM, main = "1954", xlab = "Slope")
+plot(trans54.df.train$Ceiling, trans54.df.train$VAM, main = "1954", xlab = "Ceiling")
+plot(trans54.df.train$Mid, trans54.df.train$VAM, main = "1954", xlab = "Mid")
+```
+
+Modeling for transformed predicgtors for year 1954
+
+We see below, same general results, VAM decreases with SLope and Mid but increases with Ceiling
+```{r}
+model.trans <- glm(response ~ Slope + Ceiling + Mid,  data = trans54.df.train, family=binomial(link="logit"))
+summary(model.trans)
+```
+
+
+Evaluating this transformed model's goodness of fit below
+```{r}
+predicted.54.trans <- plogis(predict(model.trans, trans54.df.test))
+
+#Find Optimal Prediction cutoff
+optCutOff <- optimalCutoff(trans54.df.test$response, predicted.54.trans)
+
+#Misclassification Error
+misClassError(trans54.df.test$response, predicted.54.trans, threshold = optCutOff)
+
+
+#ROC Curve
+plotROC(trans54.df.test, predicted.54.trans)
+
+
+
+#Sensitivity(Truth Detection Rate)
+sensitivity(trans54.df.test$response, predicted.54.trans, threshold = optCutOff)
+
+```
+The transformed model above is able to predict `Success` counties 21% of the time so this is worse than the non-transformed model
+
+
+## 1958
+
+Model for year 1958 below
+
+#1958 Training and Test Set
+
+```{r}
+smp_size <- floor(.7 * nrow(df.58))
+set.seed(123)
+train_ind <- sample(seq_len(nrow(df.58)), size = smp_size)
+
+df.58.train <- df.58[train_ind,]
+
+df.58.test <- df.58[-train_ind,]
+
+```
+
+
+
+# Exploratory plots for year 1958
+
+```{r 58model, echo=FALSE}
+plot(df.58$Slope, df.58$VAM)
+plot(df.58$Mid, df.58$VAM)
+plot(df.58$Ceiling, df.58$VAM)
+plot(df.58.train$Mid, df.58.train$VAM)
+ggplot(df.58,aes(x = Slope, y = VAM)) + geom_point()  + geom_smooth(method =  "lm") + ggtitle("1958")
+```
+
+
+# 1958 Modeling
+```{r}
+model <- glm(response ~ Slope + Ceiling + Mid,  data = df.58.train, family="binomial")
+summary(model)
+
+
+predicted.58 <- plogis(predict(model, df.58.test))
+
+#Find Optimal Prediction cutoff
+optCutOff <- optimalCutoff(df.58.test$response, predicted.58)
+
+#Misclassification Error
+misClassError(df.58.test$response, predicted.58, threshold = optCutOff)
+
+
+#ROC Curve
+plotROC(df.58.test, predicted.58)
+
+
+
+#Sensitivity(Truth Detection Rate)
+sensitivity(df.58.test$response, predicted.58, threshold = optCutOff)
+
+```
+
+Interestingly enough thoughm the 1958 model is able to predict `Success ` counties 47% of the time, this is by far the best.
+
+
+
+
+
+
+
+
+
+# MidWestern States training and test
+```{r}
+
+#Oh, MI, MN, IL, IN, WI 
+midWest <- subset(df, State == "OH" | State == "MI" | State == "MN" | State == "IL" | State == "IN" | State == "WI")
+smp_size <- floor(.7 * nrow(midWest))
+set.seed(123)
+train_ind <- sample(seq_len(nrow(midWest)), size = smp_size)
+
+midWest.train <- midWest[train_ind,]
+
+midWest.test <- midWest[-train_ind,]
+
+```
+
+Exploring only midwestern states
+```{r}
+
+
+#Plots for Transformed Predictors in Year 1954
+plot(midWest$Slope, midWest$VAM)
+plot(midWest$Ceiling, midWest$VAM)
+plot(midWest$Mid, midWest$VAM)
+
+#Response on X-Axis
+plot(midWest$VAM, midWest$Ceiling)
+
+
+
+model_midWest <- glm(response ~ Slope + Ceiling + Mid,  data = midWest.train, family=binomial(link = "logit"))
+summary(model_midWest)
+
+
+predicted.midWest <- plogis(predict(model_midWest, midWest.test))
+
+#Find Optimal Prediction cutoff
+optCutOff <- optimalCutoff(midWest.test$response, predicted.midWest)
+
+#Misclassification Error
+misClassError(midWest.test$response, predicted.midWest, threshold = optCutOff)
+
+
+#ROC Curve
+plotROC(midWest.test, predicted.midWest)
+
+
+
+#Sensitivity(Truth Detection Rate)
+sensitivity(midWest.test$response, predicted.midWest, threshold = optCutOff)
+```
+
+Midwest model is no good, 12% sucess in prediction, however there aren't many observations so this was to be expected. 

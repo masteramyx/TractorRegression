@@ -1,0 +1,402 @@
+"","fips","County","state","maxRucc"
+"1",1055,"Etowah","Alabama",3
+"2",1073,"Jefferson","Alabama",2
+"3",1089,"Madison","Alabama",3
+"4",1097,"Mobile","Alabama",3
+"5",1101,"Montgomery","Alabama",3
+"6",1113,"Russell","Alabama",3
+"7",1125,"Tuscaloosa","Alabama",3
+"8",4013,"Maricopa","Arizona",2
+"9",4019,"Pima","Arizona",2
+"10",5033,"Crawford","Arkansas",3
+"11",5035,"Crittenden","Arkansas",2
+"12",5069,"Jefferson","Arkansas",3
+"13",5091,"Miller","Arkansas",3
+"14",5119,"Pulaski","Arkansas",3
+"15",5131,"Sebastian","Arkansas",3
+"16",6001,"Alameda","California",1
+"17",6013,"Contra Costa","California",1
+"18",6019,"Fresno","California",2
+"19",6029,"Kern","California",2
+"20",6037,"Los Angeles","California",1
+"21",6041,"Marin","California",1
+"22",6059,"Orange","California",1
+"23",6065,"Riverside","California",2
+"24",6067,"Sacramento","California",2
+"25",6071,"San Bernardino","California",2
+"26",6073,"San Diego","California",1
+"27",6075,"San Francisco","California",1
+"28",6077,"San Joaquin","California",3
+"29",6081,"San Mateo","California",1
+"30",6083,"Santa Barbara","California",3
+"31",6085,"Santa Clara","California",2
+"32",6095,"Solano","California",1
+"33",8001,"Adams","Colorado",2
+"34",8005,"Arapahoe","Colorado",2
+"35",8013,"Boulder","Colorado",2
+"36",8031,"Denver","Colorado",2
+"37",8041,"El Paso","Colorado",3
+"38",8059,"Jefferson","Colorado",2
+"39",8101,"Pueblo","Colorado",3
+"40",9001,"Fairfield","Connecticut",1
+"41",9003,"Hartford","Connecticut",2
+"42",9009,"New Haven","Connecticut",2
+"43",9011,"New London","Connecticut",3
+"44",10003,"New Castle","Delaware",3
+"45",12011,"Broward","Florida",3
+"46",12031,"Duval","Florida",3
+"47",12033,"Escambia","Florida",3
+"48",12057,"Hillsborough","Florida",2
+"49",12086,"Dade","Florida",2
+"50",12095,"Orange","Florida",3
+"51",12099,"Palm Beach","Florida",3
+"52",12103,"Pinellas","Florida",2
+"53",12113,"Santa Rosa","Florida",3
+"54",12117,"Seminole","Florida",3
+"55",13021,"Bibb","Georgia",3
+"56",13051,"Chatham","Georgia",3
+"57",13053,"Chattahoochee","Georgia",3
+"58",13063,"Clayton","Georgia",1
+"59",13067,"Cobb","Georgia",1
+"60",13089,"DeKalb","Georgia",1
+"61",13095,"Dougherty","Georgia",3
+"62",13121,"Campbell","Georgia",2
+"63",13135,"Gwinnett","Georgia",1
+"64",13153,"Houston","Georgia",3
+"65",13215,"Muscogee","Georgia",3
+"66",13245,"Richmond","Georgia",3
+"67",13295,"Walker","Georgia",3
+"68",16001,"Ada","Idaho",3
+"69",17019,"Champaign","Illinois",3
+"70",17031,"Cook","Illinois",1
+"71",17043,"DuPage","Illinois",1
+"72",17089,"Kane","Illinois",1
+"73",17097,"Lake","Illinois",1
+"74",17099,"La Salle","Illinois",3
+"75",17111,"McHenry","Illinois",1
+"76",17115,"Macon","Illinois",3
+"77",17119,"Madison","Illinois",1
+"78",17143,"Peoria","Illinois",2
+"79",17161,"Rock Island","Illinois",2
+"80",17163,"Saint Clair","Illinois",1
+"81",17167,"Sangamon","Illinois",3
+"82",17179,"Tazewell","Illinois",2
+"83",17197,"Will","Illinois",1
+"84",17201,"Winnebago","Illinois",3
+"85",18003,"Allen","Indiana",3
+"86",18019,"Clark","Indiana",2
+"87",18021,"Clay","Indiana",3
+"88",18029,"Dearborn","Indiana",1
+"89",18035,"Delaware","Indiana",3
+"90",18043,"Floyd","Indiana",2
+"91",18057,"Hamilton","Indiana",2
+"92",18059,"Hancock","Indiana",2
+"93",18063,"Hendricks","Indiana",2
+"94",18081,"Johnson","Indiana",2
+"95",18089,"Lake","Indiana",1
+"96",18097,"Marion","Indiana",2
+"97",18099,"Marshall","Indiana",2
+"98",18109,"Morgan","Indiana",2
+"99",18127,"Porter","Indiana",1
+"100",18141,"St. Joseph","Indiana",2
+"101",18145,"Shelby","Indiana",2
+"102",18153,"Sullivan","Indiana",3
+"103",18163,"Vanderburg","Indiana",3
+"104",18165,"Vermillion","Indiana",3
+"105",18167,"Vigo","Indiana",3
+"106",18173,"Warrick","Indiana",3
+"107",19013,"Black Hawk","Iowa",3
+"108",19061,"Dubuque","Iowa",3
+"109",19113,"Linn","Iowa",3
+"110",19153,"Polk","Iowa",2
+"111",19155,"Pottawattamie","Iowa",2
+"112",19163,"Scott","Iowa",2
+"113",19193,"Woodbury","Iowa",3
+"114",20015,"Butler","Kansas",2
+"115",20091,"Johnson","Kansas",2
+"116",20173,"Sedgwick","Kansas",2
+"117",20177,"Shawnee","Kansas",3
+"118",20209,"Wyandotte","Kansas",2
+"119",21015,"Boone","Kentucky",1
+"120",21019,"Boyd","Kentucky",3
+"121",21037,"Campbell","Kentucky",1
+"122",21067,"Fayette","Kentucky",3
+"123",21101,"Henderson","Kentucky",3
+"124",21111,"Jefferson","Kentucky",2
+"125",21117,"Kenton","Kentucky",1
+"126",22015,"Bossier","Louisiana",2
+"127",22017,"Caddo","Louisiana",2
+"128",22019,"Calcasieu","Louisiana",3
+"129",22033,"East Baton Rouge","Louisiana",3
+"130",22051,"Jefferson","Louisiana",2
+"131",22055,"Lafayette","Louisiana",3
+"132",22071,"Orleans","Louisiana",2
+"133",22073,"Ouachita","Louisiana",3
+"134",22087,"St. Bernard","Louisiana",2
+"135",23001,"Androscoggin","Maine",3
+"136",23005,"Cumberland","Maine",3
+"137",24003,"Anne Arundel","Maryland",1
+"138",24005,"Baltimore","Maryland",1
+"139",24015,"Cecil","Maryland",3
+"140",24031,"Montgomery","Maryland",1
+"141",24033,"Prince Georges","Maryland",1
+"142",25003,"Berkshire","Massachusetts",3
+"143",25005,"Bristol","Massachusetts",1
+"144",25009,"Essex","Massachusetts",1
+"145",25013,"Hampden","Massachusetts",2
+"146",25015,"Hampshire","Massachusetts",2
+"147",25017,"Middlesex","Massachusetts",1
+"148",25021,"Norfolk","Massachusetts",1
+"149",25023,"Plymouth","Massachusetts",3
+"150",25025,"Suffolk","Massachusetts",1
+"151",25027,"Worcester","Massachusetts",2
+"152",26017,"Bay","Michigan",3
+"153",26037,"Clinton","Michigan",2
+"154",26045,"Eaton","Michigan",2
+"155",26049,"Genesee","Michigan",2
+"156",26065,"Ingham","Michigan",2
+"157",26075,"Jackson","Michigan",3
+"158",26077,"Kalamazoo","Michigan",3
+"159",26081,"Kent","Michigan",2
+"160",26087,"Lapeer","Michigan",2
+"161",26099,"Macomb","Michigan",1
+"162",26115,"Monroe","Michigan",2
+"163",26121,"Muskegon","Michigan",3
+"164",26125,"Oakland","Michigan",1
+"165",26139,"Ottawa","Michigan",2
+"166",26145,"Saginaw","Michigan",3
+"167",26161,"Washtenaw","Michigan",3
+"168",26163,"Wayne","Michigan",1
+"169",27003,"Anoka","Minnesota",1
+"170",27027,"Clay","Minnesota",3
+"171",27037,"Dakota","Minnesota",1
+"172",27053,"Hennepin","Minnesota",1
+"173",27123,"Ramsey","Minnesota",1
+"174",27137,"St. Louis","Minnesota",2
+"175",27163,"Washington","Minnesota",1
+"176",28049,"Hinds","Mississippi",3
+"177",28121,"Rankin","Mississippi",3
+"178",29021,"Buchanan","Missouri",3
+"179",29037,"Cass","Missouri",1
+"180",29047,"Clay","Missouri",1
+"181",29071,"Franklin","Missouri",1
+"182",29077,"Greene","Missouri",3
+"183",29095,"Jackson","Missouri",1
+"184",29099,"Jefferson","Missouri",1
+"185",29165,"Platte","Missouri",1
+"186",29183,"St. Charles","Missouri",1
+"187",29189,"St. Louis","Missouri",1
+"188",30013,"Cascade","Montana",3
+"189",30111,"Yellowstone","Montana",3
+"190",31043,"Dakota","Nebraska",3
+"191",31055,"Douglas","Nebraska",2
+"192",31109,"Lancaster","Nebraska",3
+"193",31153,"Sarpy","Nebraska",2
+"194",32003,"Clark","Nevada",3
+"195",32031,"Washoe","Nevada",3
+"196",33011,"Hillsborough","New Hampshire",3
+"197",34001,"Atlantic","New Jersey",3
+"198",34003,"Bergen","New Jersey",1
+"199",34005,"Burlington","New Jersey",1
+"200",34007,"Camden","New Jersey",1
+"201",34013,"Essex","New Jersey",1
+"202",34015,"Gloucester","New Jersey",1
+"203",34017,"Hudson","New Jersey",1
+"204",34021,"Mercer","New Jersey",2
+"205",34023,"Middlesex","New Jersey",1
+"206",34027,"Morris","New Jersey",1
+"207",34031,"Passaic","New Jersey",1
+"208",34033,"Salem","New Jersey",2
+"209",34035,"Somerset","New Jersey",1
+"210",34039,"Union","New Jersey",1
+"211",34041,"Warren","New Jersey",2
+"212",35001,"Bernalillo","New Mexico",2
+"213",36001,"Albany","New York",2
+"214",36005,"Bronx (The Bronx)","New York",1
+"215",36007,"Broome","New York",2
+"216",36029,"Erie","New York",1
+"217",36043,"Herkimer","New York",2
+"218",36047,"Kings (Brooklyn)","New York",1
+"219",36051,"Livingston","New York",2
+"220",36053,"Madison","New York",2
+"221",36055,"Monroe","New York",2
+"222",36059,"Nassau","New York",1
+"223",36061,"New York (Manhattan)","New York",1
+"224",36063,"Niagara","New York",1
+"225",36065,"Oneida","New York",2
+"226",36067,"Onondaga","New York",2
+"227",36073,"Orleans","New York",2
+"228",36075,"Oswego","New York",2
+"229",36081,"Queens (Queens)","New York",1
+"230",36083,"Rensselaer","New York",2
+"231",36085,"Richmond (Richmond)","New York",1
+"232",36087,"Rockland","New York",1
+"233",36091,"Saratoga","New York",2
+"234",36093,"Schenectady","New York",2
+"235",36103,"Suffolk","New York",1
+"236",36107,"Tioga","New York",2
+"237",36117,"Wayne","New York",2
+"238",36119,"Westchester","New York",1
+"239",37021,"Buncombe","N. Carolina",3
+"240",37063,"Durham","N. Carolina",3
+"241",37067,"Forsyth","N. Carolina",3
+"242",37081,"Guilford","N. Carolina",3
+"243",37119,"Mecklenburg","N. Carolina",2
+"244",37179,"Union","N. Carolina",2
+"245",37183,"Wake","N. Carolina",3
+"246",38017,"Cass","N. Dakota",3
+"247",39003,"Allen County","Ohio",3
+"248",39013,"Belmont County","Ohio",2
+"249",39017,"Butler County","Ohio",2
+"250",39023,"Clark County","Ohio",3
+"251",39029,"Columbiana County","Ohio",2
+"252",39035,"Cuyahoga County","Ohio",1
+"253",39049,"Franklin County","Ohio",2
+"254",39057,"Greene County","Ohio",2
+"255",39061,"Hamilton County","Ohio",1
+"256",39081,"Jefferson County","Ohio",2
+"257",39085,"Lake County","Ohio",1
+"258",39087,"Lawrence County","Ohio",2
+"259",39093,"Lorain County","Ohio",1
+"260",39095,"Lucas County","Ohio",2
+"261",39099,"Mahoning County","Ohio",2
+"262",39109,"Miami County","Ohio",2
+"263",39113,"Montgomery County","Ohio",2
+"264",39151,"Stark County","Ohio",2
+"265",39153,"Summit County","Ohio",2
+"266",39155,"Trumbull County","Ohio",2
+"267",40017,"Canadian","Oklahoma",2
+"268",40027,"Cleveland","Oklahoma",2
+"269",40031,"Comanche","Oklahoma",3
+"270",40037,"Creek","Oklahoma",2
+"271",40079,"Le Flore","Oklahoma",3
+"272",40109,"Oklahoma","Oklahoma",2
+"273",40113,"Osage","Oklahoma",2
+"274",40135,"Sequoyah","Oklahoma",3
+"275",40143,"Tulsa","Oklahoma",2
+"276",41005,"Clackamas","Oregon",2
+"277",41039,"Lane","Oregon",3
+"278",41051,"Multnomah","Oregon",2
+"279",41067,"Washington","Oregon",2
+"280",42001,"Adams","Pennsylvania",2
+"281",42003,"Allegheny","Pennsylvania",1
+"282",42007,"Beaver","Pennsylvania",1
+"283",42011,"Berks","Pennsylvania",2
+"284",42013,"Blair","Pennsylvania",3
+"285",42017,"Bucks","Pennsylvania",1
+"286",42021,"Cambria","Pennsylvania",2
+"287",42029,"Chester","Pennsylvania",1
+"288",42041,"Cumberland","Pennsylvania",2
+"289",42043,"Dauphin","Pennsylvania",2
+"290",42045,"Delaware","Pennsylvania",1
+"291",42049,"Erie","Pennsylvania",2
+"292",42069,"Lackawanna","Pennsylvania",2
+"293",42071,"Lancaster","Pennsylvania",2
+"294",42073,"Lawrence","Pennsylvania",2
+"295",42077,"Lehigh","Pennsylvania",2
+"296",42079,"Luzerne","Pennsylvania",2
+"297",42085,"Mercer","Pennsylvania",2
+"298",42091,"Montgomery","Pennsylvania",1
+"299",42095,"Northampton","Pennsylvania",2
+"300",42099,"Perry","Pennsylvania",2
+"301",42101,"Philadelphia","Pennsylvania",1
+"302",42111,"Somerset","Pennsylvania",2
+"303",42115,"Susquehanna","Pennsylvania",3
+"304",42125,"Washington","Pennsylvania",1
+"305",42129,"Westmoreland","Pennsylvania",1
+"306",42133,"York","Pennsylvania",2
+"307",44001,"Bristol","Rhode Island",1
+"308",44003,"Kent","Rhode Island",1
+"309",44005,"Newport","Rhode Island",1
+"310",44007,"Providence","Rhode Island",1
+"311",44009,"Washington","Rhode Island",1
+"312",45003,"Aiken","S. Carolina",3
+"313",45015,"Berkeley","S. Carolina",2
+"314",45019,"Charleston","S. Carolina",2
+"315",45045,"Greenville","S. Carolina",2
+"316",45063,"Lexington","S. Carolina",2
+"317",45077,"Pickens","S. Carolina",2
+"318",45079,"Richland","S. Carolina",2
+"319",45083,"Spartanburg","S. Carolina",2
+"320",45091,"York","S. Carolina",3
+"321",46099,"Minnehaha","S. Dakota",3
+"322",47001,"Anderson","Tennessee",2
+"323",47009,"Blount","Tennessee",2
+"324",47037,"Davidson","Tennessee",2
+"325",47065,"Hamilton","Tennessee",2
+"326",47093,"Knox","Tennessee",2
+"327",47157,"Shelby","Tennessee",2
+"328",47165,"Sumner","Tennessee",2
+"329",47189,"Wilson","Tennessee",2
+"330",48009,"Archer","Texas",3
+"331",48029,"Bexar","Texas",2
+"332",48037,"Bowie","Texas",3
+"333",48039,"Brazoria","Texas",1
+"334",48061,"Cameron","Texas",3
+"335",48085,"Collin","Texas",1
+"336",48113,"Dallas","Texas",1
+"337",48121,"Denton","Texas",1
+"338",48135,"Ector","Texas",3
+"339",48139,"Ellis","Texas",1
+"340",48141,"El Paso","Texas",2
+"341",48157,"Fort Bend","Texas",1
+"342",48167,"Galveston","Texas",3
+"343",48187,"Guadalupe","Texas",2
+"344",48201,"Harris","Texas",1
+"345",48245,"Jefferson","Texas",2
+"346",48251,"Johnson","Texas",2
+"347",48253,"Jones","Texas",3
+"348",48291,"Liberty","Texas",1
+"349",48303,"Lubbock","Texas",3
+"350",48309,"McLennan","Texas",3
+"351",48329,"Midland","Texas",3
+"352",48339,"Montgomery","Texas",1
+"353",48355,"Nueces","Texas",3
+"354",48361,"Orange","Texas",2
+"355",48375,"Potter","Texas",3
+"356",48381,"Randall","Texas",3
+"357",48423,"Smith","Texas",3
+"358",48439,"Tarrant","Texas",2
+"359",48441,"Taylor","Texas",3
+"360",48451,"Tom Green","Texas",3
+"361",48453,"Travis","Texas",3
+"362",48479,"Webb","Texas",3
+"363",48485,"Wichita","Texas",3
+"364",49011,"Davis","Utah",2
+"365",49035,"Salt Lake","Utah",2
+"366",49049,"Utah","Utah",3
+"367",49057,"Weber","Utah",3
+"368",51009,"Amherst","Virginia",3
+"369",51013,"Arlington (+Alexandria)","Virginia",1
+"370",51031,"Campbell (+Lynchburg)","Virginia",3
+"371",51041,"Chesterfield","Virginia",2
+"372",51059,"Fairfax","Virginia",1
+"373",51085,"Hanover","Virginia",2
+"374",51087,"Henrico (+Richmond)","Virginia",2
+"375",51161,"Roanoke","Virginia",3
+"376",51199,"York","Virginia",3
+"377",51650,"Elizabeth City (+Hmptn)","Virginia",2
+"378",51700,"Warwick (+Nwport Nws)","Virginia",2
+"379",51710,"Norfolk (+Nflk, +Ptsmth)","Virginia",2
+"380",51810,"Princess Anne","Virginia",2
+"381",53011,"Clark","Washington",2
+"382",53033,"King","Washington",1
+"383",53053,"Pierce","Washington",2
+"384",53061,"Snohomish","Washington",1
+"385",53063,"Spokane","Washington",2
+"386",54009,"Brooke","West Virginia",2
+"387",54011,"Cabell","West Virginia",2
+"388",54019,"Fayette","West Virginia",2
+"389",54029,"Hancock","West Virginia",2
+"390",54039,"Kanawha","West Virginia",2
+"391",54051,"Marshall","West Virginia",2
+"392",54069,"Ohio","West Virginia",2
+"393",54099,"Wayne","West Virginia",2
+"394",55009,"Brown","Wisconsin",3
+"395",55025,"Dane","Wisconsin",3
+"396",55031,"Douglas","Wisconsin",2
+"397",55059,"Kenosha","Wisconsin",2
+"398",55079,"Milwaukee","Wisconsin",1
+"399",55089,"Ozaukee","Wisconsin",1
+"400",55101,"Racine","Wisconsin",2
+"401",55133,"Waukesha","Wisconsin",1

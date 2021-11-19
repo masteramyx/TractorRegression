@@ -1,0 +1,243 @@
+---
+title: "Ohio"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r libs, include=FALSE}
+library(readstata13)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+```
+# Analysis of Ohio Education and Tractor Data
+
+```{r data-in, echo = FALSE, warning = FALSE}
+# This 1940 Edu dataset is already filtered to White Males 18-22
+edu1940 <- read.csv("Edu_Raw_Data/OhioEduData/ohio1940edu.csv")
+edu1940[,1] <- NULL
+edu1930 <- read.csv("Edu_Raw_Data/OhioEduData/ohio1930edu.csv")
+edu1930 <- subset(edu1930, sex == "Male")
+edu1930 <- subset(edu1930, between(age, 18, 22))
+edu1930[,1] <- NULL
+
+ohio1930Tractor <- read_csv("Tractor_Raw_Data/OhioTractorData/ohioTractor1930.csv")
+ohio1930Tractor$county <- ohio1930Tractor$county * 10
+#Remove Pickaway
+ohio1930Tractor <- subset(ohio1930Tractor, county != 1290)
+ohio1930Tractor[,c(1,2)] <- NULL
+
+
+ohio1940Tractor <-read_csv("Tractor_Raw_Data/OhioTractorData/ohioTractor1940.csv")
+ohio1940Tractor$county <- ohio1940Tractor$county * 10
+#Remove Pickaway
+ohio1940Tractor <- subset(ohio1940Tractor, county != 1290)
+ohio1940Tractor[,c(1,2)] <- NULL
+
+
+edu1940Avg <- edu1940 %>%
+  group_by(county) %>%
+  summarise(avg = mean(higrade))
+
+df_40Edu30Tractor<- merge(edu1940Avg, ohio1930Tractor, by = "county")
+rownames(df_40Edu30Tractor) <- 1:nrow(df_40Edu30Tractor)
+
+
+#vam-ohio
+vam.ohio <- read.csv("vamOhio.csv")
+vam.ohio1947 <- subset(vam.ohio, year == 1947)
+vam.ohio1954 <- subset(vam.ohio, year == 1954)
+```
+
+## Exploratory Plots of Average Education by County Vs. % of Farms with Tractors
+
+### Ohio 1940 Average Education Vs. Ohio 1930 % of Farms with Tractor
+```{r 1940EduVs1930Tractor, echo=FALSE}
+low_counties <- df_40Edu30Tractor[c(65, 70,49, 24),]
+close_counties <- df_40Edu30Tractor[c(63,35),]
+
+ggplot(df_40Edu30Tractor, aes(x = percent_farm_tractor, y = avg)) + geom_point() + geom_path(data = low_counties, color = "red") + geom_point(data = close_counties, shape = 8, color = "red") + xlab("1930 % Farms with Tractor") + ylab("1940 Average Education") + ggtitle("Ohio Counties")
+```
+
+
+
+### Linear Model 1940 Avg. Edu vs 1930 % Farm w/ Tractor
+```{r}
+ohEduModLinear <- lm(avg ~ percent_farm_tractor, data = df_40Edu30Tractor)
+plot(df_40Edu30Tractor$percent_farm_tractor, df_40Edu30Tractor$avg, main = "Linear")
+abline(ohEduModLinear, col = "red")
+summary(ohEduModLinear)
+```
+
+
+### Log-Linear Model 1940 Avg. Edu vs 1930 % Farm w/ Tractor
+```{r}
+df_40Edu30Tractor$logAvg <- log(df_40Edu30Tractor$avg)
+ohEduModLogLinear <- lm(logAvg ~ percent_farm_tractor, data = df_40Edu30Tractor)
+plot(df_40Edu30Tractor$percent_farm_tractor, df_40Edu30Tractor$logAvg, main = "Log-Linear")
+abline(ohEduModLogLinear, col = "red")
+summary(ohEduModLogLinear)
+
+```
+
+### Linear-Log Model 1940 Avg. Edu vs 1930 % Farm w/ Tractor
+```{r}
+df_40Edu30Tractor$logPercent <- log(df_40Edu30Tractor$percent_farm_tractor)
+ohEduModLinearLog <- lm(avg ~ logPercent, data = df_40Edu30Tractor)
+plot(df_40Edu30Tractor$logPercent, df_40Edu30Tractor$avg, main = "Linear-Log")
+abline(ohEduModLinearLog, col = "red")
+summary(ohEduModLinearLog)
+```
+
+
+
+```{r, echo=FALSE}
+#Create VAM PlotSrc data (1947)
+vam1947Tractor30 <- merge(df_40Edu30Tractor, vam.ohio1947, by = "fips")
+vam1947Tractor30 <- vam1947Tractor30[!is.na(vam1947Tractor30$VAM),]
+```
+
+
+
+
+### Linear Model VAM 1947 vs Percent 1930
+```{r}
+vam47Tractor30Mod <- lm(VAM ~ percent_farm_tractor, data = vam1947Tractor30)
+plot(vam1947Tractor30$percent_farm_tractor, vam1947Tractor30$VAM, main = "Linear")
+abline(vam47Tractor30Mod, col = "red")
+summary(vam47Tractor30Mod)
+```
+
+
+# Residuals from VAM 47 vs. Percent 30
+```{r}
+vam47Residuals <-data.frame(vam47Tractor30Mod$residuals, vam1947Tractor30$county, vam1947Tractor30)
+vam47Residuals
+```
+
+
+
+
+
+
+
+```{r, echo=FALSE}
+#Create VAM PlotSrc data (1954)
+vam1954Tractor30 <- merge(df_40Edu30Tractor, vam.ohio1954, by = "fips")
+vam1954Tractor30 <- vam1954Tractor30[!is.na(vam1954Tractor30$VAM),]
+```
+
+
+
+
+### Linear Model VAM 1947 vs Percent 1930
+```{r}
+vam54Tractor30Mod <- lm(VAM ~ percent_farm_tractor, data = vam1954Tractor30)
+plot(vam1954Tractor30$percent_farm_tractor, vam1954Tractor30$VAM, main = "Linear")
+abline(vam54Tractor30Mod, col = "red")
+summary(vam54Tractor30Mod)
+```
+
+
+# Residuals from VAM 47 vs. Percent 30
+```{r}
+vam54Residuals <-data.frame(vam54Tractor30Mod$residuals, vam1954Tractor30$county, vam1954Tractor30)
+vam54Residuals
+```
+
+
+
+
+# High Education and VAM(1947, 1954)
+
+##1947
+```{r}
+plot(vam1947Tractor30$VAM, vam1947Tractor30$avg, main = "Education vs. VAM (1947)")
+```
+
+
+
+
+
+
+##1954
+```{r}
+plot(vam1954Tractor30$VAM, vam1954Tractor30$avg, main = "Education vs. VAM (1954)")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+Notice the lowest points going across the X-Axis(On Plot with line connecting outlier counties). These counties identified left-to-right are:
+
+* Pike County
+* Ross County
+* Madison County
+* Fayette County
+
+```{r low_counties_write_df, include = FALSE}
+pike <- subset(edu1940, county == 1310)
+# write.csv(pike, "pike_county.csv")
+ ross <- subset(edu1940, county == 1410)
+# write.csv(ross, "ross_county.csv")
+ madison <- subset(edu1940, county == 970)
+# write.csv(madison, "madison_county.csv")
+ fayette <- subset(edu1940, county == 470)
+# write.csv(fayette, "fayette_county.csv")
+```
+
+The 2 Counties which are overlaying each other and can be seen to the right of the outlier line are
+
+* Paulding County
+* Henry County
+
+```{r overlap_counties_df, include = FALSE}
+# paulding <- subset(edu1940, county == 1250)
+# write.csv(paulding, "paulding_county.csv")
+# henry <- subset(edu1940, county == 690)
+# write.csv(henry, "henry_county.csv")
+```
+
+
+The objective was to look at the difference in education from 1930 and 1940 and plot that against the % of Farms with Tractors in 1930. 
+The problem I encountered was that the 1930's Education dataset has not features which indicate the highest grade completed for an individual.
+
+Taking a closer look at the outlier counties listed above(Pike, Ross, Madison, Fayette)
+but removing everyone who is currently in school, as they could continue their education and in that case the current represented value would not be accurate.
+
+## Highest Grade Completed by Age for the 4 outlier counties
+```{r}
+pike <- subset(pike, school == "No, not in school")
+ggplot(pike, aes(x = age, y = higrade, group = age)) + geom_boxplot() + xlab("Age Groups") + ylab("Highest Grade Completed") + ggtitle("Pike County")
+```
+
+```{r}
+ross <- subset(ross, school == "No, not in school")
+ggplot(ross, aes(x = age, y = higrade, group = age)) + geom_boxplot() + xlab("Age Groups") + ylab("Highest Grade Completed") + ggtitle("Ross County")
+```
+
+```{r}
+madison <- subset(madison, school == "No, not in school")
+ggplot(madison, aes(x = age, y = higrade, group = age)) + geom_boxplot() + xlab("Age Groups") + ylab("Highest Grade Completed") + ggtitle("Madison County")
+```
+
+```{r}
+fayette <- subset(fayette, school == "No, not in school")
+ggplot(fayette, aes(x = age, y = higrade, group = age)) + geom_boxplot() + xlab("Age Groups") + ylab("Highest Grade Completed") + ggtitle("Fayette County")
+```
+
